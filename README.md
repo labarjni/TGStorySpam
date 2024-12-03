@@ -13,3 +13,9 @@
 - [x] Настройка задержки между историями с диапозоном
 - [x] Есть возможность упомянуть другую историю (переслать)
 - [x] Подгрузка пользователей из вашей базы
+
+<h2> Установка </h2>
+1. Скачайте репозиторий <code>git clone https://github.com/labarjni/TGStorySpam.git</code><br>
+2. Установите зависимости <code>pip install -r requirements.txt</code><br>
+3. Настройте скрипт в <code>config.py</code><br>
+4. Запуск <code>py main.py</code><br>
