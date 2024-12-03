@@ -78,6 +78,7 @@ async def main():
     groups = [user_ids[i:i+GROUP_SIZE_FOR_STORY] for i in range(0, len(user_ids), GROUP_SIZE_FOR_STORY)]
 
     for group in groups:
+        message_n = 0
         index_of_account = account_index % len(ACCOUNTS)
         account_data = ACCOUNTS[index_of_account]
 
@@ -90,6 +91,7 @@ async def main():
                 time.sleep(2)
 
                 message = await client.send_message(user_id, 'Привет!')
+                message_n += 1
                 time.sleep(1)
 
                 await message.delete()
@@ -98,7 +100,7 @@ async def main():
                 delete_user_from_file(USER_IDS_FILE, user_id)
                 
                 user_n += 1
-                print(f"{str(user_n)} message of {str(GROUP_SIZE_FOR_STORY)}")
+                print(f"{str(message_n)} message of {str(GROUP_SIZE_FOR_STORY)}")
             except Exception as e:
                 delete_user_from_file(USER_IDS_FILE, user_id)
 
