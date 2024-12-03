@@ -102,15 +102,14 @@ async def main():
             except Exception as e:
                 delete_user_from_file(USER_IDS_FILE, user_id)
 
-                print(e.__str__())
-                # if e.__str__():
-                #     await client.send_message("SpamBot", "/start")
-                #     ACCOUNTS.remove(index_of_account)
-                #
-                #     await sleep_account(account_data, user_id)
-                #     break
+                if 'Too many requests' in e.__str__():
+                    await client.send_message("SpamBot", "/start")
+                    ACCOUNTS.remove(index_of_account)
+                
+                    await sleep_account(account_data, user_id)
+                    group.clear()
 
-                print(f"Error occurred or user not found: {e}")
+                print(f"An error occurred while processing the user: {e}")
 
         if len(group) == GROUP_SIZE_FOR_STORY:
             story_message = ' '.join([f'@{user}' for user in group])
