@@ -108,7 +108,7 @@ async def main():
                     await client.send_message("SpamBot", "/start")
                     ACCOUNTS.pop(index_of_account)
 
-                    await asyncio.create_task(sleep_account(account_data))
+                    asyncio.create_task(sleep_account(account_data))
                     break
 
                 print(f"An error occurred while processing the user: {e}")
