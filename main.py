@@ -107,9 +107,9 @@ async def main():
                 if 'Too many requests' in e.__str__():
                     await client.send_message("SpamBot", "/start")
                     ACCOUNTS.pop(index_of_account)
-                
-                    await sleep_account(account_data)
-                    group.clear()
+
+                    await asyncio.create_task(sleep_account(account_data))
+                    break
 
                 print(f"An error occurred while processing the user: {e}")
 
