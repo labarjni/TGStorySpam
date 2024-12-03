@@ -1,6 +1,8 @@
 # TGStorySpam
 Теггинг в историях очень эффективный способ рассылки в телеграм
-<br><br>![image](https://github.com/user-attachments/assets/5b447cc8-84a8-4528-9570-582f113d932e)
+<br><br>![image](https://github.com/user-attachments/assets/b76b389d-1d01-4517-89c1-6f550c976434)
+
+
 
 За сутки можно отправить от <b>60 сообщений с 1 аккаунта</b>, премиум подписка на них обязательна
 <h2> О скрипте </h2>
