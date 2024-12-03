@@ -6,7 +6,7 @@ import asyncio
 import time 
 import random
 
-from config import ACCOUNTS, STORY_DELAY_RANGE, STORY_IMAGE, USER_IDS_FILE, GROUP_SIZE_FOR_STORY, FWD_FROM_USERNAME, FWD_STORY_ID
+from config import ACCOUNTS, STORY_DELAY_RANGE, STORY_IMAGE, USER_IDS_FILE, GROUP_SIZE_FOR_STORY, FWD_FROM_USERNAME, FWD_STORY_ID, SPAM_BLOCK_DELAY
 
 async def send_story(client, msg, username):
     story_request = functions.stories.SendStoryRequest(
@@ -60,12 +60,12 @@ def delete_user_from_file(filename, user_to_delete):
             if user.strip() != user_to_delete:
                 file.write(user)
 
-async def sleep_account(account, user_id):
-    print(f"@{user_id} the user get a spam block and sleep for 24 hours")
-    await asyncio.sleep(60 * 60 * 24)
+async def sleep_account(account):
+    print(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} hours")
+    await asyncio.sleep(60 * 60 * SPAM_BLOCK_DELAY)
 
     ACCOUNTS.append(account)
-    print(f"@{user_id} available again")
+    print(f"@{account['username']} available again")
 
 async def main():
     user_n = 0
@@ -106,9 +106,9 @@ async def main():
 
                 if 'Too many requests' in e.__str__():
                     await client.send_message("SpamBot", "/start")
-                    ACCOUNTS.remove(index_of_account)
+                    ACCOUNTS.pop(index_of_account)
                 
-                    await sleep_account(account_data, user_id)
+                    await sleep_account(account_data)
                     group.clear()
 
                 print(f"An error occurred while processing the user: {e}")
