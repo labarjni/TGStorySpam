@@ -78,7 +78,7 @@ async def main():
     groups = [user_ids[i:i+GROUP_SIZE_FOR_STORY] for i in range(0, len(user_ids), GROUP_SIZE_FOR_STORY)]
 
     for group in groups:
-        message_n = 0
+        message_n = 1
         index_of_account = account_index % len(ACCOUNTS)
         account_data = ACCOUNTS[index_of_account]
 
