@@ -1,4 +1,3 @@
-import colorlog
 from telethon import TelegramClient
 from telethon import functions, types
 
@@ -6,6 +5,8 @@ import asyncio
 import threading
 
 import logging
+import colorlog
+
 import time 
 import random
 
@@ -36,7 +37,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
     }
 ))
 
-file_handler = logging.FileHandler('telegram_bot.log', mode='a')
+file_handler = logging.FileHandler('TGSpamStory.log', mode='a')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 logger.addHandler(handler)
