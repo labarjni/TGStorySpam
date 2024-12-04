@@ -61,7 +61,7 @@ def delete_user_from_file(filename, user_to_delete):
                 file.write(user)
 
 async def sleep_account(account):
-    print(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} hours")
+    print(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} minutes")
     await asyncio.sleep(60 * SPAM_BLOCK_DELAY)
 
     ACCOUNTS.append(account)
