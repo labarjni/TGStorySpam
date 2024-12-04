@@ -165,7 +165,7 @@ async def main():
     for group in groups:
         while not ACCOUNTS:
             logger.warning("No accounts available, waiting...")
-            time.sleep(10)
+            time.sleep(60)
 
         account_index = account_index % len(ACCOUNTS)
         account_data = ACCOUNTS[account_index]
