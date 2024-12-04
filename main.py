@@ -62,7 +62,7 @@ def delete_user_from_file(filename, user_to_delete):
 
 async def sleep_account(account):
     print(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} hours")
-    await asyncio.sleep(60 * 60 * SPAM_BLOCK_DELAY)
+    await asyncio.sleep(SPAM_BLOCK_DELAY)
 
     ACCOUNTS.append(account)
     print(f"@{account['username']} available again")
@@ -78,50 +78,51 @@ async def main():
     groups = [user_ids[i:i+GROUP_SIZE_FOR_STORY] for i in range(0, len(user_ids), GROUP_SIZE_FOR_STORY)]
 
     for group in groups:
-        message_n = 0
-        index_of_account = account_index % len(ACCOUNTS)
-        account_data = ACCOUNTS[index_of_account]
+        if ACCOUNTS:
+            message_n = 0
+            index_of_account = account_index % len(ACCOUNTS)
+            account_data = ACCOUNTS[index_of_account]
 
-        client = TelegramClient(account_data['session'], account_data['api_id'], account_data['api_hash'])
-        await client.start()
+            client = TelegramClient(account_data['session'], account_data['api_id'], account_data['api_hash'])
+            await client.start()
 
-        for user_id in group:
-            try:
-                await add_contact(client, user_id, user_n)
-                time.sleep(2)
+            for user_id in group:
+                try:
+                    await add_contact(client, user_id, user_n)
+                    time.sleep(2)
 
-                message = await client.send_message(user_id, 'Привет!')
-                message_n += 1
-                time.sleep(1)
+                    message = await client.send_message(user_id, 'Привет!')
+                    message_n += 1
+                    time.sleep(1)
 
-                await message.delete()
-                time.sleep(5)
+                    await message.delete()
+                    time.sleep(5)
 
-                delete_user_from_file(USER_IDS_FILE, user_id)
-                
-                user_n += 1
-                print(f"{str(message_n)} message of {str(GROUP_SIZE_FOR_STORY)}")
-            except Exception as e:
-                delete_user_from_file(USER_IDS_FILE, user_id)
+                    delete_user_from_file(USER_IDS_FILE, user_id)
 
-                if 'Too many requests' in e.__str__():
-                    await client.send_message("SpamBot", "/start")
-                    ACCOUNTS.pop(index_of_account)
+                    user_n += 1
+                    print(f"{str(message_n)} message of {str(GROUP_SIZE_FOR_STORY)}")
+                except Exception as e:
+                    delete_user_from_file(USER_IDS_FILE, user_id)
 
-                    asyncio.create_task(sleep_account(account_data))
-                    break
+                    if 'Too many requests' in e.__str__():
+                        await client.send_message("SpamBot", "/start")
+                        ACCOUNTS.pop(index_of_account)
 
-                print(f"An error occurred while processing the user: {e}")
+                        asyncio.create_task(sleep_account(account_data))
+                        break
 
-        if len(group) == GROUP_SIZE_FOR_STORY:
-            story_message = ' '.join([f'@{user}' for user in group])
-            await send_story(client, story_message, account_data['username'])
-            print("The story has been sent to users")
+                    print(f"An error occurred while processing the user: {e}")
 
-        await client.disconnect()
+            if len(group) == GROUP_SIZE_FOR_STORY:
+                story_message = ' '.join([f'@{user}' for user in group])
+                await send_story(client, story_message, account_data['username'])
+                print("The story has been sent to users")
 
-        account_index += 1
-        total_groups += 1
+            await client.disconnect()
+
+            account_index += 1
+            total_groups += 1
 
         time.sleep(random.randint(STORY_DELAY_RANGE[0], STORY_DELAY_RANGE[1]))
 
