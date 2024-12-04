@@ -37,7 +37,7 @@ handler.setFormatter(colorlog.ColoredFormatter(
     }
 ))
 
-file_handler = logging.FileHandler('TGSpamStory.log', mode='a')
+file_handler = logging.FileHandler('TGStorySpam.log', mode='a')
 file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 
 logger.addHandler(handler)
