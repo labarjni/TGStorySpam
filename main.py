@@ -149,6 +149,11 @@ async def process_group(group, account_data, user_n, account_index):
 
     await client.disconnect()
 
+def is_divisible(number):
+    if number % 10 == 0:
+        return True
+    else:
+        return False
 
 async def main():
     print("The script was started successfully, author: Alexander Tyrin, @labarjni")
@@ -162,9 +167,13 @@ async def main():
 
     groups = [user_ids[i:i + GROUP_SIZE_FOR_STORY] for i in range(0, len(user_ids), GROUP_SIZE_FOR_STORY)]
 
+    accounts_find_attempts = 0
+
     for group in groups:
         while not ACCOUNTS:
-            logger.warning("No accounts available, waiting...")
+            accounts_find_attempts += 1
+            if is_divisible(accounts_find_attempts):
+                logger.warning("No accounts available, waiting...")
             time.sleep(60)
 
         account_index = account_index % len(ACCOUNTS)
