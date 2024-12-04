@@ -21,6 +21,8 @@ from config import (
     SPAM_BLOCK_DELAY
 )
 
+user_n = 1
+
 logger = colorlog.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
@@ -79,7 +81,9 @@ async def send_story(client, msg, username):
     await client(story_request)
 
 
-async def add_contact(client, user_id, user_n):
+async def add_contact(client, user_id):
+    global user_n
+
     await client(functions.contacts.AddContactRequest(
         id=user_id,
         first_name='User',
@@ -105,16 +109,18 @@ def sleep_account(account):
     logger.info(f"@{account['username']} available again")
 
 
-async def process_group(group, account_data, user_n, account_index):
+async def process_group(group, account_data, account_index):
     client = TelegramClient(account_data['session'], account_data['api_id'], account_data['api_hash'])
     await client.start()
+
+    global user_n
 
     message_n = 0
     spam_block = False
 
     for user_id in group:
         try:
-            await add_contact(client, user_id, user_n)
+            await add_contact(client, user_id)
             time.sleep(2)
 
             message = await client.send_message(user_id, 'Привет!')
@@ -158,7 +164,6 @@ def is_divisible(number):
 async def main():
     print("The script was started successfully, author: Alexander Tyrin, @labarjni")
 
-    user_n = 1
     account_index = 0
     total_groups = 0
 
@@ -178,7 +183,7 @@ async def main():
 
         account_index = account_index % len(ACCOUNTS)
         account_data = ACCOUNTS[account_index]
-        await process_group(group, account_data, user_n, account_index)
+        await process_group(group, account_data, account_index)
 
         account_index += 1
         total_groups += 1
