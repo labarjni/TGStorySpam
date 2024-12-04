@@ -62,7 +62,7 @@ def delete_user_from_file(filename, user_to_delete):
 
 async def sleep_account(account):
     print(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} hours")
-    await asyncio.sleep(SPAM_BLOCK_DELAY)
+    await asyncio.sleep(60 * SPAM_BLOCK_DELAY)
 
     ACCOUNTS.append(account)
     print(f"@{account['username']} available again")
@@ -80,6 +80,7 @@ async def main():
     for group in groups:
         if ACCOUNTS:
             message_n = 0
+            spam_block = False
             index_of_account = account_index % len(ACCOUNTS)
             account_data = ACCOUNTS[index_of_account]
 
@@ -109,12 +110,14 @@ async def main():
                         await client.send_message("SpamBot", "/start")
                         ACCOUNTS.pop(index_of_account)
 
+                        spam_block = True
+
                         asyncio.create_task(sleep_account(account_data))
                         break
 
                     print(f"An error occurred while processing the user: {e}")
 
-            if len(group) == GROUP_SIZE_FOR_STORY:
+            if len(group) == GROUP_SIZE_FOR_STORY and spam_block == False:
                 story_message = ' '.join([f'@{user}' for user in group])
                 await send_story(client, story_message, account_data['username'])
                 print("The story has been sent to users")
