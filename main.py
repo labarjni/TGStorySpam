@@ -1,14 +1,47 @@
-import threading
-
+import colorlog
 from telethon import TelegramClient
 from telethon import functions, types
 
 import asyncio
+import threading
 
+import logging
 import time 
 import random
 
-from config import ACCOUNTS, STORY_DELAY_RANGE, STORY_IMAGE, USER_IDS_FILE, GROUP_SIZE_FOR_STORY, FWD_FROM_USERNAME, FWD_STORY_ID, SPAM_BLOCK_DELAY
+from config import (
+    ACCOUNTS,
+    STORY_DELAY_RANGE,
+    STORY_IMAGE,
+    USER_IDS_FILE,
+    GROUP_SIZE_FOR_STORY,
+    FWD_FROM_USERNAME,
+    FWD_STORY_ID,
+    SPAM_BLOCK_DELAY
+)
+
+logger = colorlog.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+    '%(log_color)s%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%H:%M:%S',
+    log_colors={
+        'DEBUG': 'cyan',
+        'INFO': 'green',
+        'WARNING': 'yellow',
+        'ERROR': 'red',
+        'CRITICAL': 'bold_red',
+    }
+))
+
+file_handler = logging.FileHandler('telegram_bot.log', mode='a')
+file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+
+logger.addHandler(handler)
+logger.addHandler(file_handler)
+
 
 async def send_story(client, msg, username):
     story_request = functions.stories.SendStoryRequest(
@@ -64,11 +97,11 @@ def delete_user_from_file(filename, user_to_delete):
 
 
 def sleep_account(account):
-    print(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} minutes")
+    logger.warning(f"@{account['username']} the user get a spam block and sleep for {str(SPAM_BLOCK_DELAY)} minutes")
     time.sleep(60 * SPAM_BLOCK_DELAY)
 
     ACCOUNTS.append(account)
-    print(f"@{account['username']} available again")
+    logger.info(f"@{account['username']} available again")
 
 
 async def process_group(group, account_data, user_n, account_index):
@@ -93,7 +126,7 @@ async def process_group(group, account_data, user_n, account_index):
             delete_user_from_file(USER_IDS_FILE, user_id)
 
             user_n += 1
-            print(f"{str(message_n)} message of {str(GROUP_SIZE_FOR_STORY)}")
+            logger.debug(f"{str(message_n)} out of {str(GROUP_SIZE_FOR_STORY)} messages in the group has been sent")
         except Exception as e:
             delete_user_from_file(USER_IDS_FILE, user_id)
 
@@ -106,17 +139,19 @@ async def process_group(group, account_data, user_n, account_index):
                 threading.Thread(target=sleep_account, args=(account_data,)).start()
                 break
 
-            print(f"An error occurred while processing the user: {e}")
+            logger.error(f"An error occurred while processing the user: {e}")
 
     if len(group) == GROUP_SIZE_FOR_STORY and not spam_block:
         story_message = ' '.join([f'@{user}' for user in group])
         await send_story(client, story_message, account_data['username'])
-        print("The story has been sent to users")
+        logger.info("The story has been sent to users")
 
     await client.disconnect()
 
 
 async def main():
+    print("The script was started successfully, author: Alexander Tyrin, @labarjni")
+
     user_n = 1
     account_index = 0
     total_groups = 0
@@ -128,7 +163,7 @@ async def main():
 
     for group in groups:
         while not ACCOUNTS:
-            print("No accounts available, waiting...")
+            logger.warning("No accounts available, waiting...")
             time.sleep(10)
 
         account_index = account_index % len(ACCOUNTS)
