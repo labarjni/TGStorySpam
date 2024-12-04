@@ -113,7 +113,7 @@ async def process_group(group, account_data, user_n, account_index):
         await send_story(client, story_message, account_data['username'])
         print("The story has been sent to users")
 
-    client.disconnect()
+    await client.disconnect()
 
 
 async def main():
