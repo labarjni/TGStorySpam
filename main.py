@@ -1,3 +1,5 @@
+import datetime
+
 from telethon import TelegramClient
 from telethon import functions, types
 
@@ -10,8 +12,11 @@ import colorlog
 import time 
 import random
 
+from telethon.tl.functions.account import UpdateNotifySettingsRequest
+
 from config import (
     ACCOUNTS,
+    NOTIFY_FROM_USER,
     STORY_DELAY_RANGE,
     STORY_IMAGE,
     USER_IDS_FILE,
@@ -120,10 +125,22 @@ async def process_group(group, account_data, account_index):
 
     for user_id in group:
         try:
+            me = await client.get_me()
+            logger.debug(f"Connected to {me.username} : +{me.phone}")
             await add_contact(client, user_id)
             time.sleep(2)
 
             message = await client.send_message(user_id, 'Привет!')
+
+            if not NOTIFY_FROM_USER:
+                DEFAULT_MUTE_SETTINGS = types.InputPeerNotifySettings(
+                    silent=True,
+                    mute_until=datetime.timedelta(days=365))
+                await client(UpdateNotifySettingsRequest(
+                    peer=message.peer_id,
+                    settings=DEFAULT_MUTE_SETTINGS
+                ))
+
             message_n += 1
             time.sleep(1)
 

@@ -9,6 +9,10 @@ ACCOUNTS = [
     }
 ]
 
+# Включить уведомления от пользователей (True/False)
+# |*| Enable notifications from users [True/False]
+NOTIFY_FROM_USER = False
+
 # Диапазон задержек между историями (в секундах) 
 # |*| Delay range between stories [in seconds]
 STORY_DELAY_RANGE = (600, 900)
