@@ -19,7 +19,7 @@ STORY_DELAY_RANGE = (600, 900)
 
 # Интервал проверки спам-блока и сна в случае ограничений (в минутах)
 # |*| The interval for checking the spam block and sleep in case of restrictions [in minutes]
-SPAM_BLOCK_DELAY = 3
+SPAM_BLOCK_DELAY = 60
  
 # Количество отметок для отправки истории (рекомендуется 5) 
 # |*| The number of mentions to send the story [recommended 5]
